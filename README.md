@@ -151,18 +151,3 @@ Potential improvements for this project:
 ## 🤝 Contributing
 
 Feel free to fork this project and submit pull requests for improvements!
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🙏 Acknowledgments
-
-- Built from scratch to understand neural network fundamentals
-- Inspired by classic machine learning textbooks and tutorials
-- XOR problem is a standard benchmark for neural networks
-
----
-
-**Note**: This is an educational implementation focused on understanding the fundamentals. For production use, consider established libraries like TensorFlow or PyTorch.
-
