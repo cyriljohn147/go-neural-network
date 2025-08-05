@@ -18,8 +18,11 @@ func main() {
 	biasesHidden := createVector(hiddenNodes)
 	biasesOutput := createVector(outputNodes)
 
-	fmt.Println("Neural Net from Scratch - Now with Training!")
+	fmt.Println("Neural Net from Scratch - Now with Training and Visualization!")
 	initializeWeightsAndBiases(weightsInputHidden, weightsHiddenOutput, biasesHidden, biasesOutput)
+
+	// Create loss data tracker
+	lossData := &LossData{}
 
 	// XOR training data
 	trainingInputs := [][]float64{
@@ -47,8 +50,15 @@ func main() {
 			backpropagate(trainingInputs[i], hiddenLayer, output, trainingTargets[i], weightsInputHidden, weightsHiddenOutput, biasesHidden, biasesOutput)
 		}
 		
+		avgLoss := totalLoss / float64(len(trainingInputs))
+		
+		// Store loss data for plotting (every 100 epochs to avoid too many points)
+		if epoch%100 == 0 {
+			lossData.AddLoss(epoch, avgLoss)
+		}
+		
 		if epoch%1000 == 0 {
-			fmt.Printf("Epoch %d, Average Loss: %.6f\n", epoch, totalLoss/float64(len(trainingInputs)))
+			fmt.Printf("Epoch %d, Average Loss: %.6f\n", epoch, avgLoss)
 		}
 	}
 
@@ -58,6 +68,34 @@ func main() {
 		_, output := forwardPassWithHidden(input, weightsInputHidden, biasesHidden, weightsHiddenOutput, biasesOutput)
 		fmt.Printf("Input: %v, Target: %.0f, Output: %.4f\n", input, trainingTargets[i], output)
 	}
+
+	// Generate visualizations
+	fmt.Println("\nGenerating visualizations...")
+	
+	// 1. Plot the network architecture
+	if err := PlotNetworkArchitecture("network_architecture.png"); err != nil {
+		fmt.Printf("Error creating network architecture plot: %v\n", err)
+	}
+	
+	// 2. Plot the training loss
+	if err := lossData.PlotLoss("training_loss.png"); err != nil {
+		fmt.Printf("Error creating loss plot: %v\n", err)
+	}
+	
+	// 3. Plot the decision boundary
+	if err := PlotDecisionBoundary(
+		weightsInputHidden,
+		biasesHidden,
+		weightsHiddenOutput,
+		biasesOutput,
+		trainingInputs,
+		trainingTargets,
+		"decision_boundary.png",
+	); err != nil {
+		fmt.Printf("Error creating decision boundary plot: %v\n", err)
+	}
+	
+	fmt.Println("\nVisualization complete! Check the generated PNG files.")
 }
 
 func forwardPass(
